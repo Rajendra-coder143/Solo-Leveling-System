@@ -5,322 +5,365 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SYSTEM: SOLO LEVELING</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Share+Tech+Mono&display=swap');
 
         :root {
-            --bg-dark: #000000;
-            --panel-bg: #0d1117;
-            --border: #00a8ff;
-            --glow: rgba(0, 168, 255, 0.5);
-            --text-main: #ffffff;
-            --text-dim: #8b949e;
-            --highlight: #00e676;
+            --bg-dark: #050505;
+            --panel-bg: rgba(10, 15, 25, 0.95);
+            --system-blue: #00a8ff;
+            --system-glow: rgba(0, 168, 255, 0.6);
+            --text-white: #ffffff;
+            --text-dim: #b0c4de;
             --danger: #ff3333;
-            --quest-bg: #161b22;
+            --time-color: #ffcc00;
+            --alarm-bg: rgba(255, 0, 0, 0.9);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Share Tech Mono', monospace; user-select: none; }
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
 
         body {
             background-color: var(--bg-dark);
-            color: var(--text-main);
-            display: flex; justify-content: center;
-            min-height: 100vh; padding: 10px;
+            background-image: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('https://wallpaperaccess.com/full/3794350.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            color: var(--text-white);
+            font-family: 'Share Tech Mono', monospace;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
         }
 
         .system-window {
-            width: 100%; max-width: 450px;
-            border: 2px solid var(--border);
-            box-shadow: 0 0 20px var(--glow);
+            width: 100%; max-width: 600px;
+            border: 2px solid var(--system-blue);
+            box-shadow: 0 0 20px var(--system-glow);
             background: var(--panel-bg);
-            display: flex; flex-direction: column;
+            padding: 2px; position: relative;
+            animation: bootUp 0.8s ease-out;
             padding-bottom: 20px;
         }
 
-        .header {
-            background: rgba(0, 168, 255, 0.1);
-            border-bottom: 1px solid var(--border);
-            padding: 10px; display: flex; justify-content: space-between; align-items: center;
+        @keyframes bootUp { 0% { opacity: 0; transform: scaleY(0); } 100% { opacity: 1; transform: scaleY(1); } }
+
+        .window-header {
+            background: var(--system-blue); color: #000; padding: 10px;
+            text-align: center; font-weight: bold; font-size: 1.2rem;
+            display: flex; justify-content: space-between; align-items: center;
         }
 
-        /* TOGGLE BUTTONS */
-        .header-controls { display: flex; gap: 10px; }
-        .icon-btn {
-            background: rgba(0,0,0,0.3); border: 1px solid #555;
-            padding: 5px 8px; cursor: pointer; color: #fff; font-size: 0.7rem; border-radius: 4px;
+        .sound-btn {
+            background: rgba(0,0,0,0.3); border: 1px solid #000;
+            padding: 5px 10px; cursor: pointer; color: #fff; font-size: 0.8rem;
+            border-radius: 4px;
         }
-        .icon-btn.active { border-color: var(--highlight); color: var(--highlight); box-shadow: 0 0 5px var(--highlight); }
+        .sound-btn.active { background: #00ff41; color: #000; border-color: #00ff41; }
 
-        .profile { display: flex; gap: 15px; padding: 15px; border-bottom: 1px solid #30363d; }
-        .avatar { width: 80px; height: 80px; border: 2px solid var(--border); background: #000; display: flex; align-items: center; justify-content: center; }
-        .avatar img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .info { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 5px; }
-        .name { font-size: 1.4rem; color: var(--border); text-transform: uppercase; }
-        
-        .xp-bg { width: 100%; height: 6px; background: #30363d; margin-top: 5px; }
-        .xp-fill { height: 100%; background: var(--border); width: 0%; transition: 0.3s; box-shadow: 0 0 5px var(--border); }
+        .profile-section { display: flex; gap: 20px; padding: 20px; border-bottom: 1px solid rgba(0,168,255,0.3); }
+        .avatar-frame {
+            width: 100px; height: 100px; border: 2px solid var(--system-blue);
+            box-shadow: 0 0 15px var(--system-glow); overflow: hidden; background: #000;
+        }
+        .avatar-frame img { width: 100%; height: 100%; object-fit: cover; }
+        .stats-info { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .name-row { display: flex; justify-content: space-between; align-items: center; }
+        .player-name { font-size: 1.5rem; color: var(--system-blue); text-shadow: 0 0 5px var(--system-glow); }
+        .edit-btn { background: transparent; border: 1px solid var(--system-blue); color: var(--system-blue); cursor: pointer; padding: 2px 8px; }
 
-        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 15px; }
-        .stat-card { background: rgba(255,255,255,0.05); padding: 10px; border-left: 3px solid var(--border); }
-        .stat-label { font-size: 0.7rem; color: var(--text-dim); }
-        .stat-val { font-size: 1.2rem; font-weight: bold; color: var(--text-main); }
+        .xp-bar-bg { width: 100%; height: 10px; background: #111; border: 1px solid #333; margin-top: 5px; }
+        .xp-bar-fill { height: 100%; background: var(--system-blue); width: 0%; transition: width 0.5s ease; box-shadow: 0 0 10px var(--system-glow); }
 
-        .quest-container { padding: 0 15px; margin-top: 10px; }
-        .section-title { color: var(--border); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        .attributes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; }
+        .stat-box { background: rgba(0,168,255,0.05); border-left: 3px solid var(--system-blue); padding: 10px; }
+        .stat-value { font-size: 1.2rem; font-weight: bold; color: #fff; }
 
+        .quest-list { list-style: none; padding: 0 20px; }
         .quest-item {
-            display: grid; grid-template-columns: 30px 1fr auto; 
-            align-items: center; gap: 10px;
-            background: var(--quest-bg); margin-bottom: 8px; padding: 12px;
-            border: 1px solid #30363d; transition: 0.2s;
+            display: grid; grid-template-columns: 30px 85px 1fr auto;
+            align-items: center; background: rgba(255,255,255,0.03);
+            margin-bottom: 10px; padding: 15px; border: 1px solid transparent;
+            gap: 10px; transition: 0.3s;
         }
-        .quest-item.done { border-color: var(--highlight); opacity: 0.6; }
-        
+        .quest-item.completed { border-color: var(--system-blue); }
+        .quest-item.completed .checkbox { background: var(--system-blue); }
+        .quest-item.completed .quest-text, .quest-item.completed .quest-time { color: var(--text-dim); text-decoration: line-through; opacity: 0.5; }
         .checkbox { width: 20px; height: 20px; border: 2px solid var(--text-dim); display: flex; align-items: center; justify-content: center; }
-        .quest-item.done .checkbox { background: var(--highlight); border-color: var(--highlight); }
+        .quest-time { color: var(--time-color); font-weight: bold; font-size: 0.9rem; }
+        .quest-xp { font-size: 0.8rem; color: var(--system-blue); }
 
-        .q-details { display: flex; flex-direction: column; }
-        .q-time { font-size: 0.8rem; color: #ffcc00; font-weight: bold; }
-        .q-text { font-size: 1rem; }
-        .q-xp { font-size: 0.8rem; color: var(--border); }
+        .report-alert {
+            display: none; margin: 0 20px 20px 20px; padding: 15px;
+            background: rgba(0, 168, 255, 0.1); border: 1px dashed var(--system-blue);
+            text-align: center; cursor: pointer; animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0% { box-shadow: 0 0 5px var(--system-blue); } 50% { box-shadow: 0 0 20px var(--system-blue); } }
 
-        .btn { background: var(--border); color: #000; border: none; padding: 8px 15px; font-weight: bold; cursor: pointer; margin-top: 10px; width: 100%; text-transform: uppercase; }
-        
-        /* ALARM OVERLAY */
         .alarm-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(255, 0, 0, 0.95); z-index: 999; display: none;
+            background: var(--alarm-bg); z-index: 200; display: none;
             flex-direction: column; align-items: center; justify-content: center;
             animation: flash 0.5s infinite alternate;
         }
-        @keyframes flash { from { opacity: 1; } to { opacity: 0.8; } }
-        .alarm-msg { font-size: 2rem; font-weight: bold; margin-bottom: 20px; text-align: center; }
+        @keyframes flash { from { background: rgba(255,0,0,0.8); } to { background: rgba(100,0,0,0.9); } }
+        .alarm-title { font-size: 3rem; color: #fff; font-family: 'Cinzel'; margin-bottom: 20px; }
+        .stop-btn { background: #fff; border: none; padding: 15px 40px; font-size: 1.5rem; font-weight: bold; cursor: pointer; }
 
-        /* MODAL */
         .modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 999;
+            background: rgba(0,0,0,0.95); z-index: 100;
             display: none; align-items: center; justify-content: center;
         }
         .modal.active { display: flex; }
-        .modal-box { background: #0d1117; border: 2px solid var(--border); padding: 20px; width: 90%; max-width: 350px; }
-        input { width: 100%; padding: 10px; background: #000; border: 1px solid #333; color: #fff; margin: 10px 0; }
+        .modal-content {
+            background: var(--bg-dark); border: 2px solid var(--system-blue);
+            padding: 30px; width: 90%; max-width: 400px; text-align: center;
+        }
 
-        #error-msg { color: var(--danger); font-size: 0.8rem; text-align: center; display: none; margin-top: 5px; }
-
+        .file-upload-wrapper {
+            margin-top: 15px; border: 1px dashed var(--system-blue);
+            padding: 15px; cursor: pointer; position: relative;
+            background: rgba(0, 168, 255, 0.05); text-align: center;
+        }
+        input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+        .upload-label { color: var(--system-blue); font-size: 0.9rem; }
+        .modal-btn {
+            background: var(--system-blue); border: none; padding: 12px;
+            font-weight: bold; cursor: pointer; margin-top: 10px; width: 100%;
+            font-family: inherit; transition: 0.3s;
+        }
+        .close-btn { background: transparent; border: 1px solid var(--danger); color: var(--danger); }
+        .report-text { text-align: left; margin: 20px 0; font-size: 0.9rem; line-height: 1.6; color: var(--text-dim); }
+        .report-stat { color: #fff; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="alarm-overlay" id="alarm-overlay">
-        <div class="alarm-msg" id="alarm-text">WAKE UP!</div>
-        <button class="btn" style="background:white; color:black; max-width:200px;" onclick="stopAlarm()">I AM AWAKE</button>
+        <div class="alarm-title">⚠️ WAKE UP HUNTER!</div>
+        <div id="alarm-msg" style="font-size:1.5rem; color:#fff; margin-bottom:30px;">QUEST STARTED</div>
+        <button class="stop-btn" onclick="stopAlarm()">ACCEPT QUEST</button>
     </div>
 
-    <div class="system-window">
-        <div class="header">
-            <span id="clock" style="font-weight:bold;">00:00:00</span>
-            <div class="header-controls">
-                <button class="icon-btn" id="wake-btn" onclick="toggleWakeLock()">👁️ NO SLEEP</button>
-                <button class="icon-btn" id="sound-btn" onclick="toggleSound()">🔇 SOUND</button>
-            </div>
+    <div class="system-window" id="dashboard">
+        <div class="window-header">
+            <button class="sound-btn" id="sound-toggle" onclick="toggleSound()">🔇 SOUND: OFF</button>
+            <span style="font-size: 0.8rem;" id="clock-display">00:00:00</span>
         </div>
-
-        <div class="profile">
-            <div class="avatar">
-                <img id="p-img" src="" onerror="this.src='https://via.placeholder.com/80?text=IMG'">
-            </div>
-            <div class="info">
-                <div style="display:flex; justify-content:space-between;">
-                    <span class="name" id="p-name">PLAYER</span>
-                    <button onclick="openSettings()" style="background:transparent; border:1px solid #555; color:#fff; cursor:pointer;">⚙️</button>
+        
+        <div class="profile-section">
+            <div class="avatar-frame"><img id="avatar-img" src="" alt="Avatar"></div>
+            <div class="stats-info">
+                <div class="name-row">
+                    <div class="player-name" id="player-name">PLAYER</div>
+                    <button class="edit-btn" onclick="openEditModal()">⚙️ EDIT</button>
                 </div>
-                <span class="rank">LEVEL: <span id="p-lvl">1</span></span>
-                <div class="xp-bg"><div class="xp-fill" id="p-xp"></div></div>
+                <div class="player-rank">RANK: E-Class Hunter</div>
+                <div class="player-rank" id="level-display">LEVEL: 1</div>
+                <div class="xp-bar-bg"><div class="xp-bar-fill" id="xp-bar"></div></div>
             </div>
         </div>
 
-        <div class="stats">
-            <div class="stat-card"><div class="stat-label">STR</div><div class="stat-val" id="s-str">0</div></div>
-            <div class="stat-card"><div class="stat-label">INT</div><div class="stat-val" id="s-int">0</div></div>
-            <div class="stat-card"><div class="stat-label">VIT</div><div class="stat-val" id="s-vit">0</div></div>
-            <div class="stat-card"><div class="stat-label">STREAK</div><div class="stat-val" id="s-streak">0</div></div>
+        <div class="attributes-grid">
+            <div class="stat-box"><div>STR</div><div class="stat-value" id="str-stat">10</div></div>
+            <div class="stat-box"><div>INT</div><div class="stat-value" id="int-stat">10</div></div>
+            <div class="stat-box"><div>VIT</div><div class="stat-value" id="vit-stat">10</div></div>
+            <div class="stat-box"><div>STREAK</div><div class="stat-value" id="day-streak">0</div></div>
         </div>
 
-        <div id="error-msg">⚠️ Storage Blocked: Data won't save on refresh.</div>
-
-        <div class="quest-container">
-            <div class="section-title">DAILY QUESTS</div>
-            <div id="quest-list"></div>
+        <div id="sunday-alert" class="report-alert" onclick="openReportModal()">
+            📥 DOWNLOAD WEEKLY REPORT
         </div>
 
-        <div style="padding: 0 15px;">
-            <button class="btn" onclick="downloadReport()">📥 DOWNLOAD REPORT</button>
-            <button class="btn" style="background:transparent; border:1px solid #ff3333; color:#ff3333; margin-top:20px;" onclick="hardReset()">[ RESET SYSTEM ]</button>
+        <ul class="quest-list" id="quest-list"></ul>
+        
+        <div style="text-align:center; padding:20px;">
+            <button class="edit-btn" style="color: var(--danger); border-color:var(--danger);" onclick="resetDay()">[ RESET ]</button>
         </div>
     </div>
 
-    <div class="modal" id="settings-modal">
-        <div class="modal-box">
-            <h3>EDIT PROFILE</h3>
-            <input type="text" id="in-name" placeholder="Name">
-            <input type="text" id="in-img" placeholder="Image URL">
-            <button class="btn" onclick="saveData()">SAVE</button>
-            <button class="btn" style="background:#333; color:#fff;" onclick="closeSettings()">CLOSE</button>
+    <div class="modal" id="edit-modal">
+        <div class="modal-content">
+            <h2 style="color:var(--system-blue);">SETTINGS</h2>
+            
+            <label style="display:block; text-align:left; color:#888;">Profile Picture</label>
+            <div class="file-upload-wrapper">
+                <span class="upload-label" id="img-label">📂 UPLOAD PHOTO</span>
+                <input type="file" id="input-file" accept="image/*">
+            </div>
+            
+            <label style="display:block; text-align:left; color:#888; margin-top:10px;">Hunter Name</label>
+            <input type="text" id="input-name" style="width:100%; padding:10px; background:#000; color:#fff; border:1px solid #333;">
+
+            <label style="display:block; text-align:left; color:#888; margin-top:10px;">Custom Alarm Audio</label>
+            <div class="file-upload-wrapper" style="border-color:var(--time-color);">
+                <span class="upload-label" id="audio-label" style="color:var(--time-color);">🎵 UPLOAD MP3 AUDIO</span>
+                <input type="file" id="input-audio" accept="audio/*">
+            </div>
+
+            <button class="modal-btn" onclick="saveProfile()">SAVE CHANGES</button>
+            <button class="modal-btn close-btn" onclick="closeEditModal()">CANCEL</button>
+        </div>
+    </div>
+
+    <div class="modal" id="report-modal">
+        <div class="modal-content">
+            <h2 style="color:var(--system-blue);">WEEKLY EVALUATION</h2>
+            <div class="report-text" id="report-content"></div>
+            <button class="modal-btn" onclick="downloadReport()">DOWNLOAD REPORT (.txt)</button>
+            <button class="modal-btn close-btn" onclick="closeReportModal()">CLOSE</button>
         </div>
     </div>
 
     <script>
-        const DB_KEY = 'solo_v13_data';
-        let wakeLock = null;
-        let soundEnabled = false;
-        let alarmAudio = new Audio("https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg");
-        alarmAudio.loop = true;
-        let triggeredAlarms = [];
-
-        function getSavedData() {
-            try { return JSON.parse(localStorage.getItem(DB_KEY)); } catch (e) { document.getElementById('error-msg').style.display = 'block'; return null; }
-        }
-        function saveToDB(data) {
-            try { localStorage.setItem(DB_KEY, JSON.stringify(data)); } catch (e) { document.getElementById('error-msg').style.display = 'block'; }
-        }
-
-        const defaultPlayer = {
-            name: "SUNG JIN-WOO",
-            img: "https://wallpapers.com/images/hd/solo-leveling-sung-jin-woo-dark-aura-7s4v4d7d4f.jpg",
-            lvl: 1, xp: 0, maxXp: 100,
-            stats: { str: 10, int: 10, vit: 10, streak: 0 },
-            doneTasks: [], totalTasks: 0, lastLogin: new Date().toDateString()
-        };
-
         const quests = [
-            { id: 1, time: "05:45 AM", text: "Wake Up", xp: 10, type: 'vit' },
-            { id: 2, time: "06:10 AM", text: "Exercise", xp: 20, type: 'str' },
-            { id: 3, time: "07:00 AM", text: "Revision", xp: 15, type: 'int' },
-            { id: 4, time: "07:30 AM", text: "School", xp: 20, type: 'int' },
-            { id: 5, time: "04:30 PM", text: "Deep Study", xp: 30, type: 'int' },
-            { id: 6, time: "07:00 PM", text: "Study 2", xp: 30, type: 'int' },
-            { id: 7, time: "09:00 PM", text: "Plan", xp: 15, type: 'int' },
-            { id: 8, time: "10:00 PM", text: "Sleep", xp: 20, type: 'vit' }
+            { id: 'q1', time: "05:45 AM", text: "Wake Up (No Snooze)", xp: 15, type: 'vit' },
+            { id: 'q2', time: "06:10 AM", text: "Exercise", xp: 25, type: 'str' },
+            { id: 'q3', time: "07:00 AM", text: "Revision", xp: 15, type: 'int' },
+            { id: 'q4', time: "07:30 AM", text: "School", xp: 20, type: 'int' },
+            { id: 'q5', time: "04:30 PM", text: "Deep Study 1", xp: 30, type: 'int' },
+            { id: 'q6', time: "07:00 PM", text: "Study Block 2", xp: 30, type: 'int' },
+            { id: 'q7', time: "08:30 PM", text: "Phone Break", xp: 10, type: 'vit' },
+            { id: 'q8', time: "09:00 PM", text: "Planning", xp: 15, type: 'int' },
+            { id: 'q9', time: "10:00 PM", text: "Sleep", xp: 20, type: 'vit' }
         ];
 
-        let player = getSavedData() || defaultPlayer;
+        let player = JSON.parse(localStorage.getItem('soloPlayerFinal')) || {
+            name: "PLAYER",
+            avatar: "https://wallpapers.com/images/hd/solo-leveling-sung-jin-woo-dark-aura-7s4v4d7d4f.jpg",
+            alarmUrl: "",
+            level: 1, currentXp: 0, maxXp: 100,
+            stats: { str: 10, int: 10, vit: 10, streak: 1 },
+            completedQuests: [], totalTasks: 0, lastLogin: new Date().toDateString()
+        };
 
-        if (player.lastLogin !== new Date().toDateString()) {
-            player.doneTasks = []; player.lastLogin = new Date().toDateString(); player.stats.streak++; triggeredAlarms = []; saveToDB(player);
+        let soundEnabled = false;
+        let alarmAudio = new Audio();
+        alarmAudio.loop = true;
+        let triggeredAlarms = [];
+        const el = (id) => document.getElementById(id);
+
+        function init() {
+            checkNewDay(); setupAudio(); render(); startClock();
+        }
+
+        function checkNewDay() {
+            if (player.lastLogin !== new Date().toDateString()) {
+                player.completedQuests = []; player.lastLogin = new Date().toDateString();
+                player.stats.streak += 1; triggeredAlarms = []; saveData();
+            }
+            if (new Date().getDay() === 0) el('sunday-alert').style.display = 'block';
+        }
+
+        function setupAudio() { 
+            alarmAudio.src = player.alarmUrl || "https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg";
         }
 
         function render() {
-            document.getElementById('p-name').innerText = player.name;
-            document.getElementById('p-img').src = player.img;
-            document.getElementById('p-lvl').innerText = player.lvl;
-            document.getElementById('p-xp').style.width = Math.min(100, (player.xp / player.maxXp) * 100) + "%";
-            document.getElementById('s-str').innerText = player.stats.str;
-            document.getElementById('s-int').innerText = player.stats.int;
-            document.getElementById('s-vit').innerText = player.stats.vit;
-            document.getElementById('s-streak').innerText = player.stats.streak;
+            el('player-name').innerText = player.name;
+            el('avatar-img').src = player.avatar;
+            el('level-display').innerText = `LEVEL: ${player.level}`;
+            el('str-stat').innerText = player.stats.str;
+            el('int-stat').innerText = player.stats.int;
+            el('vit-stat').innerText = player.stats.vit;
+            el('day-streak').innerText = player.stats.streak;
+            el('xp-bar').style.width = (player.currentXp / player.maxXp) * 100 + "%";
 
-            const list = document.getElementById('quest-list'); list.innerHTML = "";
+            el('quest-list').innerHTML = '';
             quests.forEach(q => {
-                const isDone = player.doneTasks.includes(q.id);
-                const item = document.createElement('div');
-                item.className = `quest-item ${isDone ? 'done' : ''}`;
-                item.onclick = () => toggleTask(q.id);
-                item.innerHTML = `<div class="checkbox">${isDone ? '✔' : ''}</div><div class="q-details"><span class="q-time">${q.time}</span><span class="q-text">${q.text}</span></div><span class="q-xp">+${q.xp} XP</span>`;
-                list.appendChild(item);
+                const isDone = player.completedQuests.includes(q.id);
+                const li = document.createElement('li');
+                li.className = `quest-item ${isDone ? 'completed' : ''}`;
+                li.onclick = () => toggleQuest(q.id);
+                li.innerHTML = `<div class="checkbox">${isDone ? '✔' : ''}</div><div class="quest-time">${q.time}</div><div class="quest-text">${q.text}</div><div class="quest-xp">+${q.xp} XP</div>`;
+                el('quest-list').appendChild(li);
             });
         }
 
-        function toggleTask(id) {
-            const index = player.doneTasks.indexOf(id);
+        function toggleQuest(id) {
+            const idx = player.completedQuests.indexOf(id);
             const quest = quests.find(q => q.id === id);
-            if (index === -1) {
-                player.doneTasks.push(id); player.xp += quest.xp; player.stats[quest.type]++; player.totalTasks++;
-                if (player.xp >= player.maxXp) { player.lvl++; player.xp = 0; player.maxXp = Math.floor(player.maxXp * 1.2); alert("LEVEL UP!"); }
-            } else {
-                player.doneTasks.splice(index, 1); player.xp = Math.max(0, player.xp - quest.xp); player.stats[quest.type]--; player.totalTasks--;
-            }
-            saveToDB(player); render();
-        }
-
-        // --- SCREEN WAKE LOCK (PREVENTS SLEEP) ---
-        async function toggleWakeLock() {
-            const btn = document.getElementById('wake-btn');
-            if (wakeLock !== null) {
-                await wakeLock.release();
-                wakeLock = null;
-                btn.classList.remove('active');
-                btn.innerText = "👁️ NO SLEEP";
-            } else {
-                try {
-                    wakeLock = await navigator.wakeLock.request('screen');
-                    btn.classList.add('active');
-                    btn.innerText = "👁️ ACTIVE";
-                    wakeLock.addEventListener('release', () => {
-                        wakeLock = null;
-                        btn.classList.remove('active');
-                        btn.innerText = "👁️ NO SLEEP";
-                    });
-                } catch (err) {
-                    alert("Error: Wake Lock not supported on this browser.");
+            if (idx === -1) {
+                player.completedQuests.push(id); player.currentXp += quest.xp;
+                player.stats[quest.type]++; player.totalTasks++;
+                if (player.currentXp >= player.maxXp) {
+                    player.level++; player.currentXp -= player.maxXp; player.maxXp = Math.floor(player.maxXp * 1.2); alert("LEVEL UP!");
                 }
-            }
-        }
-
-        function toggleSound() {
-            soundEnabled = !soundEnabled;
-            const btn = document.getElementById('sound-btn');
-            if (soundEnabled) {
-                btn.classList.add('active'); btn.innerText = "🔊 ON";
-                alarmAudio.play().then(() => { alarmAudio.pause(); alarmAudio.currentTime=0; }).catch(()=>{});
             } else {
-                btn.classList.remove('active'); btn.innerText = "🔇 OFF";
+                player.completedQuests.splice(idx, 1);
+                player.currentXp = Math.max(0, player.currentXp - quest.xp);
+                player.stats[quest.type]--; player.totalTasks--;
             }
+            saveData(); render();
         }
 
         function startClock() {
             setInterval(() => {
                 const now = new Date();
-                const timeStr = now.toLocaleTimeString();
-                document.getElementById('clock').innerText = timeStr;
-
+                el('clock-display').innerText = now.toLocaleTimeString();
                 if (soundEnabled) {
                     let h = now.getHours(); const m = now.getMinutes().toString().padStart(2,'0');
                     const ampm = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12;
-                    const checkTime = `${String(h).padStart(2,'0')}:${m} ${ampm}`;
-                    
+                    const timeStr = `${String(h).padStart(2,'0')}:${m} ${ampm}`;
                     quests.forEach(q => {
-                        if (q.time === checkTime && !triggeredAlarms.includes(checkTime) && !player.doneTasks.includes(q.id)) {
-                            triggerAlarm(q.text, checkTime);
+                        if (q.time === timeStr && !triggeredAlarms.includes(timeStr) && !player.completedQuests.includes(q.id)) {
+                            triggerAlarm(q.text, timeStr);
                         }
                     });
                 }
             }, 1000);
         }
 
-        function triggerAlarm(msg, key) {
-            triggeredAlarms.push(key);
-            document.getElementById('alarm-text').innerText = "TIME FOR: " + msg;
-            document.getElementById('alarm-overlay').style.display = 'flex';
-            alarmAudio.play();
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            el('sound-toggle').innerText = soundEnabled ? "🔊 SOUND: ON" : "🔇 SOUND: OFF";
+            if (soundEnabled) alarmAudio.play().then(() => { alarmAudio.pause(); alarmAudio.currentTime=0; }).catch(()=>{});
         }
 
-        function stopAlarm() {
-            document.getElementById('alarm-overlay').style.display = 'none';
-            alarmAudio.pause(); alarmAudio.currentTime = 0;
-        }
+        function triggerAlarm(msg, key) { triggeredAlarms.push(key); el('alarm-msg').innerText = msg; el('alarm-overlay').style.display = 'flex'; alarmAudio.play(); }
+        function stopAlarm() { el('alarm-overlay').style.display = 'none'; alarmAudio.pause(); alarmAudio.currentTime = 0; }
 
-        function openSettings() { document.getElementById('in-name').value = player.name; document.getElementById('in-img').value = player.img; document.getElementById('settings-modal').classList.add('active'); }
-        function closeSettings() { document.getElementById('settings-modal').classList.remove('active'); }
-        function saveData() { player.name = document.getElementById('in-name').value || player.name; player.img = document.getElementById('in-img').value || player.img; saveToDB(player); render(); closeSettings(); }
+        function openReportModal() {
+            el('report-content').innerHTML = `Level: ${player.level}<br>Tasks: ${player.totalTasks}<br>Streak: ${player.stats.streak} Days`;
+            el('report-modal').classList.add('active');
+        }
+        function closeReportModal() { el('report-modal').classList.remove('active'); }
         function downloadReport() {
-            const txt = `SOLO LEVELING REPORT\nDate: ${new Date().toDateString()}\nName: ${player.name}\nLevel: ${player.lvl}\nStreak: ${player.stats.streak}\nTasks: ${player.totalTasks}`;
-            const link = document.createElement('a'); link.href = URL.createObjectURL(new Blob([txt], {type:'text/plain'})); link.download = 'Report.txt'; link.click();
+            const text = `Solo Leveling Report\nLevel: ${player.level}\nTasks: ${player.totalTasks}`;
+            const blob = new Blob([text], { type: 'text/plain' });
+            const anchor = document.createElement('a');
+            anchor.href = URL.createObjectURL(blob);
+            anchor.download = 'Report.txt'; anchor.click();
         }
-        function hardReset() { if(confirm("Reset everything?")) { localStorage.removeItem(DB_KEY); location.reload(); } }
 
-        render(); startClock();
+        function openEditModal() { el('input-name').value = player.name; el('edit-modal').classList.add('active'); }
+        function closeEditModal() { el('edit-modal').classList.remove('active'); }
+
+        function saveProfile() {
+            player.name = el('input-name').value || player.name;
+            const imgFile = el('input-file').files[0];
+            const audioFile = el('input-audio').files[0];
+
+            let pending = 0;
+            const checkDone = () => { pending--; if(pending <= 0) { setupAudio(); saveData(); render(); closeEditModal(); } };
+
+            if (imgFile) {
+                pending++;
+                const reader = new FileReader();
+                reader.onload = (e) => { player.avatar = e.target.result; checkDone(); };
+                reader.readAsDataURL(imgFile);
+            }
+            if (audioFile) {
+                pending++;
+                const reader = new FileReader();
+                reader.onload = (e) => { player.alarmUrl = e.target.result; checkDone(); };
+                reader.readAsDataURL(audioFile);
+            }
+            if (pending === 0) { setupAudio(); saveData(); render(); closeEditModal(); }
+        }
+
+        function resetDay() { if(confirm("Reset?")) { player.completedQuests = []; saveData(); render(); } }
+        function saveData() { localStorage.setItem('soloPlayerFinal', JSON.stringify(player)); }
+        init();
     </script>
 </body>
 </html>
